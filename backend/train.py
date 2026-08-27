@@ -3,9 +3,9 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
-from services.trainer import train_model
-from services.evaluator import evaluate_model
-from utils.preprocess import split_data
+from backend.services.trainer import train_model
+from backend.services.evaluator import evaluate_model
+from backend.utils.preprocess import split_data
 
 
 BASE_DIR = Path(__file__).resolve().parent
