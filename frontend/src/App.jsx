@@ -1,122 +1,138 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import TransactionForm from "./components/TransactionForm";
+import PredictionCard from "./components/PredictionCard";
+import {
+  predictTransaction,
+  checkHealth,
+} from "./services/api";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [backendOnline, setBackendOnline] = useState(false);
+
+useEffect(() => {
+  const checkBackend = async () => {
+    try {
+      await checkHealth();
+      setBackendOnline(true);
+    } catch {
+      setBackendOnline(false);
+    }
+  };
+
+  checkBackend();
+}, []);
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handlePrediction = async (transaction) => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await predictTransaction(transaction);
+      setResult(data);
+    } catch (err) {
+      console.error(err);
+      setError("Unable to analyze transaction. Please verify the backend is running.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="min-h-screen text-slate-200">
+      <header className="border-b border-white/10 bg-slate-950/40 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              RiskLens AI
+            </h1>
+            <p className="mt-1 text-sm text-slate-400">
+              Intelligent fraud risk analysis for modern payment systems
+            </p>
+          </div>
+
+          <div className="hidden rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300 md:block">
+           <div
+  className={`hidden rounded-full border px-4 py-2 text-sm md:block ${
+    backendOnline
+      ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
+      : "border-red-500/20 bg-red-500/10 text-red-300"
+  }`}
+>
+  ● {backendOnline ? "Model Online" : "Model Offline"}
+</div>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-6 py-10">
+        <section className="mb-8">
+          <p className="text-sm font-medium text-cyan-400">
+            AI Risk Operations Console
           </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+          <h2 className="mt-2 max-w-3xl text-4xl font-bold leading-tight text-white">
+            Detect suspicious transactions before they become losses.
+          </h2>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          <p className="mt-3 max-w-2xl text-slate-400">
+            RiskLens AI analyzes transaction behavior and returns fraud
+            probability, model confidence, and operational risk level.
+          </p>
+        </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-red-300">
+            {error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.4fr_0.8fr]">
+          <TransactionForm
+            onSubmit={handlePrediction}
+            loading={loading}
+          />
+
+          <div className="space-y-6">
+            <PredictionCard result={result} />
+
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+                System Status
+              </p>
+
+              <div className="mt-4 space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Backend API</span>
+                  <span
+  className={
+    backendOnline
+      ? "text-emerald-300"
+      : "text-red-300"
+  }
+>
+  {backendOnline ? "Operational" : "Offline"}
+</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Fraud Model</span>
+                  <span className="text-emerald-300">Loaded</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Explainability</span>
+                  <span className="text-amber-300">Coming next</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
