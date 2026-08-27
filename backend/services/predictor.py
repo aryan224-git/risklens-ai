@@ -2,6 +2,8 @@ from pathlib import Path
 import joblib
 
 from backend.services.explainer import explain_prediction
+from backend.services.risk_analyst import generate_risk_summary
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = BASE_DIR / "models" / "fraud_model.pkl"
@@ -34,6 +36,13 @@ def predict_transaction(features):
         features
     )
 
+    analyst_summary = generate_risk_summary(
+        prediction,
+        fraud_probability,
+        risk,
+        top_factors
+    )
+
     return {
         "prediction": prediction,
         "fraud_probability": round(
@@ -42,5 +51,6 @@ def predict_transaction(features):
         ),
         "confidence": f"{confidence * 100:.2f}%",
         "risk_level": risk,
-        "top_factors": top_factors
+        "top_factors": top_factors,
+        "analyst_summary": analyst_summary
     }

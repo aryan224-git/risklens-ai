@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+
 import TransactionForm from "./components/TransactionForm";
 import PredictionCard from "./components/PredictionCard";
 import ExplanationCard from "./components/ExplanationCard";
+import RiskAnalystCard from "./components/RiskAnalystCard";
+
 import {
   predictTransaction,
   checkHealth,
@@ -86,8 +89,8 @@ function App() {
 
           <p className="mt-3 max-w-2xl text-slate-400">
             RiskLens AI analyzes transaction behavior and returns fraud
-            probability, model confidence, operational risk level, and
-            explainable model insights.
+            probability, model confidence, operational risk level, explainable
+            model insights, and analyst recommendations.
           </p>
         </section>
 
@@ -106,7 +109,13 @@ function App() {
           <div className="space-y-6">
             <PredictionCard result={result} />
 
-            <ExplanationCard factors={result?.top_factors} />
+            <RiskAnalystCard
+              summary={result?.analyst_summary}
+            />
+
+            <ExplanationCard
+              factors={result?.top_factors}
+            />
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
@@ -159,6 +168,22 @@ function App() {
                     }
                   >
                     {backendOnline ? "SHAP Active" : "Unavailable"}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-slate-400">
+                    Risk Analyst
+                  </span>
+
+                  <span
+                    className={
+                      backendOnline
+                        ? "text-violet-300"
+                        : "text-red-300"
+                    }
+                  >
+                    {backendOnline ? "Active" : "Unavailable"}
                   </span>
                 </div>
               </div>
