@@ -8,22 +8,22 @@ import {
 
 function App() {
   const [backendOnline, setBackendOnline] = useState(false);
-
-useEffect(() => {
-  const checkBackend = async () => {
-    try {
-      await checkHealth();
-      setBackendOnline(true);
-    } catch {
-      setBackendOnline(false);
-    }
-  };
-
-  checkBackend();
-}, []);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const checkBackend = async () => {
+      try {
+        await checkHealth();
+        setBackendOnline(true);
+      } catch {
+        setBackendOnline(false);
+      }
+    };
+
+    checkBackend();
+  }, []);
 
   const handlePrediction = async (transaction) => {
     try {
@@ -31,10 +31,17 @@ useEffect(() => {
       setError("");
 
       const data = await predictTransaction(transaction);
+
       setResult(data);
+      setBackendOnline(true);
     } catch (err) {
       console.error(err);
-      setError("Unable to analyze transaction. Please verify the backend is running.");
+
+      setBackendOnline(false);
+
+      setError(
+        "Unable to analyze transaction. Please verify the backend is running."
+      );
     } finally {
       setLoading(false);
     }
@@ -48,21 +55,21 @@ useEffect(() => {
             <h1 className="text-2xl font-bold tracking-tight text-white">
               RiskLens AI
             </h1>
+
             <p className="mt-1 text-sm text-slate-400">
               Intelligent fraud risk analysis for modern payment systems
             </p>
           </div>
 
-          <div className="hidden rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300 md:block">
-           <div
-  className={`hidden rounded-full border px-4 py-2 text-sm md:block ${
-    backendOnline
-      ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
-      : "border-red-500/20 bg-red-500/10 text-red-300"
-  }`}
->
-  ● {backendOnline ? "Model Online" : "Model Offline"}
-</div>
+          {/* Dynamic backend/model status badge */}
+          <div
+            className={`hidden rounded-full border px-4 py-2 text-sm md:block ${
+              backendOnline
+                ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
+                : "border-red-500/20 bg-red-500/10 text-red-300"
+            }`}
+          >
+            ● {backendOnline ? "Model Online" : "Model Offline"}
           </div>
         </div>
       </header>
@@ -105,26 +112,45 @@ useEffect(() => {
 
               <div className="mt-4 space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Backend API</span>
+                  <span className="text-slate-400">
+                    Backend API
+                  </span>
+
                   <span
-  className={
-    backendOnline
-      ? "text-emerald-300"
-      : "text-red-300"
-  }
->
-  {backendOnline ? "Operational" : "Offline"}
-</span>
+                    className={
+                      backendOnline
+                        ? "text-emerald-300"
+                        : "text-red-300"
+                    }
+                  >
+                    {backendOnline ? "Operational" : "Offline"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Fraud Model</span>
-                  <span className="text-emerald-300">Loaded</span>
+                  <span className="text-slate-400">
+                    Fraud Model
+                  </span>
+
+                  <span
+                    className={
+                      backendOnline
+                        ? "text-emerald-300"
+                        : "text-red-300"
+                    }
+                  >
+                    {backendOnline ? "Loaded" : "Unavailable"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Explainability</span>
-                  <span className="text-amber-300">Coming next</span>
+                  <span className="text-slate-400">
+                    Explainability
+                  </span>
+
+                  <span className="text-amber-300">
+                    Coming next
+                  </span>
                 </div>
               </div>
             </div>
