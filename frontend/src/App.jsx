@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import TransactionForm from "./components/TransactionForm";
 import PredictionCard from "./components/PredictionCard";
+import ExplanationCard from "./components/ExplanationCard";
 import {
   predictTransaction,
   checkHealth,
@@ -61,7 +62,6 @@ function App() {
             </p>
           </div>
 
-          {/* Dynamic backend/model status badge */}
           <div
             className={`hidden rounded-full border px-4 py-2 text-sm md:block ${
               backendOnline
@@ -86,7 +86,8 @@ function App() {
 
           <p className="mt-3 max-w-2xl text-slate-400">
             RiskLens AI analyzes transaction behavior and returns fraud
-            probability, model confidence, and operational risk level.
+            probability, model confidence, operational risk level, and
+            explainable model insights.
           </p>
         </section>
 
@@ -104,6 +105,8 @@ function App() {
 
           <div className="space-y-6">
             <PredictionCard result={result} />
+
+            <ExplanationCard factors={result?.top_factors} />
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
@@ -148,8 +151,14 @@ function App() {
                     Explainability
                   </span>
 
-                  <span className="text-amber-300">
-                    Coming next
+                  <span
+                    className={
+                      backendOnline
+                        ? "text-emerald-300"
+                        : "text-red-300"
+                    }
+                  >
+                    {backendOnline ? "SHAP Active" : "Unavailable"}
                   </span>
                 </div>
               </div>
