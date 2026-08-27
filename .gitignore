@@ -1,0 +1,21 @@
+# Virtual Environment
+venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+
+# Environment
+.env
+
+# Dataset
+backend/data/creditcard.csv
+
+# Trained Models
+backend/models/*.pkl
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
