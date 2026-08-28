@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: risklens-backend
+    ports:
+      - "8000:8000"
+    environment:
+      FRONTEND_ORIGINS: http://localhost:3000
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000
+    container_name: risklens-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
