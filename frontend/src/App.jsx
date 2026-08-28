@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 
 import TransactionForm from "./components/TransactionForm";
 import PredictionCard from "./components/PredictionCard";
-import ExplanationCard from "./components/ExplanationCard";
 import RiskAnalystCard from "./components/RiskAnalystCard";
+import GenerativeAnalystCard from "./components/GenerativeAnalystCard";
+import ExplanationCard from "./components/ExplanationCard";
 
 import {
   predictTransaction,
@@ -53,6 +54,7 @@ function App() {
 
   return (
     <div className="min-h-screen text-slate-200">
+      {/* Header */}
       <header className="border-b border-white/10 bg-slate-950/40 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div>
@@ -65,6 +67,7 @@ function App() {
             </p>
           </div>
 
+          {/* Backend Status */}
           <div
             className={`hidden rounded-full border px-4 py-2 text-sm md:block ${
               backendOnline
@@ -77,7 +80,9 @@ function App() {
         </div>
       </header>
 
+      {/* Main */}
       <main className="mx-auto max-w-7xl px-6 py-10">
+        {/* Hero */}
         <section className="mb-8">
           <p className="text-sm font-medium text-cyan-400">
             AI Risk Operations Console
@@ -88,41 +93,55 @@ function App() {
           </h2>
 
           <p className="mt-3 max-w-2xl text-slate-400">
-            RiskLens AI analyzes transaction behavior and returns fraud
-            probability, model confidence, operational risk level, explainable
-            model insights, and analyst recommendations.
+            RiskLens AI combines machine learning, SHAP explainability,
+            operational risk intelligence, and generative AI to help analysts
+            investigate suspicious transactions.
           </p>
         </section>
 
+        {/* Error */}
         {error && (
           <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-red-300">
             {error}
           </div>
         )}
 
+        {/* Dashboard */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.4fr_0.8fr]">
+          {/* Transaction Input */}
           <TransactionForm
             onSubmit={handlePrediction}
             loading={loading}
           />
 
+          {/* Intelligence Panel */}
           <div className="space-y-6">
+            {/* Prediction */}
             <PredictionCard result={result} />
 
+            {/* Deterministic Risk Analyst */}
             <RiskAnalystCard
               summary={result?.analyst_summary}
             />
 
+            {/* Gemini Generative AI Analyst */}
+            <GenerativeAnalystCard
+              analysis={result?.ai_analysis}
+            />
+
+            {/* SHAP Explainability */}
             <ExplanationCard
               factors={result?.top_factors}
             />
 
+            {/* System Status */}
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
                 System Status
               </p>
 
               <div className="mt-4 space-y-3 text-sm">
+                {/* Backend */}
                 <div className="flex justify-between">
                   <span className="text-slate-400">
                     Backend API
@@ -139,6 +158,7 @@ function App() {
                   </span>
                 </div>
 
+                {/* Fraud Model */}
                 <div className="flex justify-between">
                   <span className="text-slate-400">
                     Fraud Model
@@ -155,6 +175,7 @@ function App() {
                   </span>
                 </div>
 
+                {/* SHAP */}
                 <div className="flex justify-between">
                   <span className="text-slate-400">
                     Explainability
@@ -171,6 +192,7 @@ function App() {
                   </span>
                 </div>
 
+                {/* Risk Analyst */}
                 <div className="flex justify-between">
                   <span className="text-slate-400">
                     Risk Analyst
@@ -184,6 +206,29 @@ function App() {
                     }
                   >
                     {backendOnline ? "Active" : "Unavailable"}
+                  </span>
+                </div>
+
+                {/* Generative AI */}
+                <div className="flex justify-between">
+                  <span className="text-slate-400">
+                    Generative AI
+                  </span>
+
+                  <span
+                    className={
+                      result?.ai_analysis?.source === "gemini"
+                        ? "text-fuchsia-300"
+                        : result?.ai_analysis
+                          ? "text-amber-300"
+                          : "text-slate-500"
+                    }
+                  >
+                    {result?.ai_analysis?.source === "gemini"
+                      ? "Gemini Active"
+                      : result?.ai_analysis
+                        ? "Fallback Active"
+                        : "Waiting"}
                   </span>
                 </div>
               </div>
